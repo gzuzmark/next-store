@@ -32,51 +32,27 @@ const ItemsList = styled.div`
   margin: 0 auto;
 `;
 
-// const Items = () => {
-//   const { loading, error, data } = useQuery(ALL_ITEMS_QUERY);
+const Items = props => {
+  const { page } = props;
+  const { loading, error, data } = useQuery(ALL_ITEMS_QUERY, {
+    variables: { skip: page * perPage - perPage },
+  });
 
-//   if (loading) return 'Loading...';
-//   if (error) return `Error! ${error.message}`;
+  if (loading) return 'Loading...';
+  if (error) return `Error! ${error.message}`;
 
-//   return (
-//     <Center>
-//       <ItemsList>
-//         {data.items.map(item => (
-//           <Item item={item} key={item.id} />
-//         ))}
-//       </ItemsList>
-//     </Center>
-//   );
-// };
-
-class Items extends Component {
-  render() {
-    return (
-      <Center>
-        <Pagination page={this.props.page} />
-        <Query
-          query={ALL_ITEMS_QUERY}
-          variables={{
-            skip: this.props.page * perPage - perPage,
-          }}
-        >
-          {({ data, error, loading }) => {
-            if (loading) return <p>Loading...</p>;
-            if (error) return <p>Error: {error.message}</p>;
-            return (
-              <ItemsList>
-                {data.items.map(item => (
-                  <Item item={item} key={item.id} />
-                ))}
-              </ItemsList>
-            );
-          }}
-        </Query>
-        <Pagination page={this.props.page} />
-      </Center>
-    );
-  }
-}
+  return (
+    <Center>
+      <Pagination page={page} />
+      <ItemsList>
+        {data.items.map(item => (
+          <Item item={item} key={item.id} />
+        ))}
+      </ItemsList>
+      <Pagination page={page} />
+    </Center>
+  );
+};
 
 export default Items;
 export { ALL_ITEMS_QUERY };
